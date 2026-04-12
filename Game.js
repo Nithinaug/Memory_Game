@@ -43,8 +43,7 @@ function createBoard() {
     grid.innerHTML = '';
 
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
-    const selectedFruits = shuffledIcons.slice(0, 4);
-    wildcardIcon = shuffledIcons[4];
+    const selectedFruits = shuffledIcons.slice(0, 5);
     let gameIcons = [...selectedFruits, ...selectedFruits];
     gameIcons.sort(() => Math.random() - 0.5);
 
