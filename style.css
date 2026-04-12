@@ -93,7 +93,7 @@ h1 {
 .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 110px);
-  grid-template-rows: repeat(2, 130px);    
+  grid-template-rows: repeat(3, 130px);    
   gap: 0.8rem; 
   width: fit-content;
   margin: 1.5rem auto;

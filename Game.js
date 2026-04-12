@@ -40,7 +40,7 @@ function createBoard() {
     if (!grid) return;
     grid.innerHTML = '';
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
-    const selectedFruits = shuffledIcons.slice(0, 4);
+    const selectedFruits = shuffledIcons.slice(0, 6);
     let gameIcons = [...selectedFruits, ...selectedFruits];
     gameIcons.sort(() => Math.random() - 0.5);
     gameIcons.forEach((icon) => {
@@ -78,7 +78,7 @@ function checkForMatch() {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
-        if (matchedPairs === 4) {
+        if (matchedPairs === 6) {
             setTimeout(() => {
                 showModal('Winner!', `Round ${round} Complete`, () => {
                     round++;
