@@ -44,20 +44,24 @@ function createBoard() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Select 4 pairs of icons
-    const selectedIcons = [...ICONS].sort(() => Math.random() - 0.5).slice(0, 4);
-    let gameIcons = [...selectedIcons, ...selectedIcons];
+    // Pick 5 unique fruits
+    const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
+    const selectedPairs = shuffledIcons.slice(0, 4);
+    const extraFruit = shuffledIcons[4]; 
+    
+    let gameIcons = [...selectedPairs, ...selectedIcons];
     gameIcons.sort(() => Math.random() - 0.5);
     
-    // Insert a decorative non-game card
-    gameIcons.push('🎮'); 
+    // Add the extra fruit
+    gameIcons.push(extraFruit);
     
     gameIcons.forEach((icon, index) => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('card');
         cardContainer.dataset.icon = icon;
         
-        if (icon === '🎮') {
+        if (icon === extraFruit) {
+            // The 9th card is a decorative "Bonus" fruit, revealed from the start
             cardContainer.classList.add('logo-card');
             cardContainer.classList.add('flipped'); 
             cardContainer.innerHTML = `
@@ -117,7 +121,6 @@ function checkForMatch() {
             });
             isChecking = false;
         } else {
-            // Wait 1 second so the user can see the mismatch before flipping back
             setTimeout(() => {
                 card1.classList.remove('flipped');
                 card2.classList.remove('flipped');
