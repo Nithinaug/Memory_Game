@@ -49,7 +49,7 @@ function createBoard() {
     let gameIcons = [...selectedIcons, ...selectedIcons];
     gameIcons.sort(() => Math.random() - 0.5);
     
-    // Insert a decorative non-game card at the end (or random)
+    // Insert a decorative non-game card
     gameIcons.push('🎮'); 
     
     gameIcons.forEach((icon, index) => {
@@ -59,7 +59,7 @@ function createBoard() {
         
         if (icon === '🎮') {
             cardContainer.classList.add('logo-card');
-            cardContainer.classList.add('flipped'); // Always show the logo
+            cardContainer.classList.add('flipped'); 
             cardContainer.innerHTML = `
                 <div class="card-face card-front"></div>
                 <div class="card-face card-back">${icon}</div>
@@ -106,6 +106,7 @@ function checkForMatch() {
                 });
             }, 500);
         }
+        isChecking = false;
     } else {
         lives--;
         updateDisplay();
@@ -114,16 +115,18 @@ function checkForMatch() {
                 round = 1;
                 initGame();
             });
+            isChecking = false;
         } else {
-            // Explicitly remove flipped class after a delay
-            card1.classList.remove('flipped');
-            card2.classList.remove('flipped');
+            // Wait 1 second so the user can see the mismatch before flipping back
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                isChecking = false;
+            }, 1000);
         }
     }
     
     flippedCards = [];
-    // Reset checking immediately so user can continue
-    isChecking = false; 
 }
 
 function showModal(title, text, callback) {
