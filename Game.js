@@ -2,18 +2,15 @@ const ICONS = ['🍎', '🍌', '🍒', '🍓', '🥑', '🍍', '🥝', '🍉', '
 
 let highScore = JSON.parse(localStorage.getItem('highscore')) || 0;
 let round = 1;
-let lives = 5;
+let lives = 4;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
 let wildcardIcon = '';
 
-// Navigation
 function play() { location.href = 'Main.html'; }
 function start() { location.href = 'Gamepage.html'; }
 function gohome() { location.href = 'Home.html'; }
-
-// Initialization
 window.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('grid-container');
     if (grid) {
@@ -48,9 +45,7 @@ function createBoard() {
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
     const selectedFruits = shuffledIcons.slice(0, 4);
     wildcardIcon = shuffledIcons[4];
-
-    // Combine 4 pairs + 1 wildcard = 9 cards
-    let gameIcons = [...selectedFruits, ...selectedFruits, wildcardIcon];
+    let gameIcons = [...selectedFruits, ...selectedFruits];
     gameIcons.sort(() => Math.random() - 0.5);
 
     gameIcons.forEach((icon, index) => {
@@ -72,10 +67,10 @@ function flipCard(card) {
     if (isChecking || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
         return;
     }
-    
+
     card.classList.add('flipped');
     flippedCards.push(card);
-    
+
     if (flippedCards.length === 2) {
         isChecking = true;
         setTimeout(checkForMatch, 600);
@@ -89,7 +84,7 @@ function checkForMatch() {
     }
 
     const [card1, card2] = flippedCards;
-    
+
     const isWildcardMatch = (card1.dataset.icon === wildcardIcon || card2.dataset.icon === wildcardIcon);
     const isStandardMatch = (card1.dataset.icon === card2.dataset.icon);
 
@@ -97,7 +92,7 @@ function checkForMatch() {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
-        
+
         if (matchedPairs === 4) {
             setTimeout(() => {
                 showModal('Winner!', `Round ${round} Complete`, () => {
@@ -138,7 +133,7 @@ function showModal(title, text, callback) {
         modal.classList.add('modal');
         document.body.appendChild(modal);
     }
-    
+
     modal.innerHTML = `
         <div class="modal-content">
             <h2>${title}</h2>
@@ -147,7 +142,7 @@ function showModal(title, text, callback) {
         </div>
     `;
     modal.style.display = 'block';
-    
+
     const btn = document.getElementById('modal-btn');
     btn.onclick = () => {
         modal.style.display = 'none';
