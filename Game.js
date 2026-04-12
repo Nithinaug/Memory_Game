@@ -1,9 +1,9 @@
 const ICONS = ['🍎', '🍌', '🍒', '🍓', '🥑', '🍍', '🥝', '🍉', '🍋', '🍐', '��', '🫐'];
-const LOGO_CONTENT = '🎮'; // Decorative card for the 9th slot
+const LOGO_CONTENT = '🎮'; 
 
 let highScore = JSON.parse(localStorage.getItem('highscore')) || 0;
 let round = 1;
-let lives = 3;
+let lives = 4;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGame() {
-    lives = 3;
+    lives = 4;
     matchedPairs = 0;
     flippedCards = [];
     isChecking = false;
@@ -55,14 +55,12 @@ function createBoard() {
     
     grid.innerHTML = '';
     
-    // 3x3 Grid = 9 slots. 
-    // We'll use 4 pairs (8 cards) + 1 logo card to fill the space.
     const numPairs = 4;
     const selectedIcons = ICONS.sort(() => Math.random() - 0.5).slice(0, numPairs);
     let gameIcons = [...selectedIcons, ...selectedIcons];
     gameIcons.sort(() => Math.random() - 0.5);
     
-    // Insert the logo card in the last position (or random)
+    // Add the logo card at the end
     gameIcons.push(LOGO_CONTENT);
     
     gameIcons.forEach((icon, index) => {
@@ -72,8 +70,10 @@ function createBoard() {
         
         if (icon === LOGO_CONTENT) {
             cardContainer.classList.add('logo-card');
+            // Fixed logo card: Always flipped to white side
+            cardContainer.classList.add('flipped');
             cardContainer.innerHTML = `
-                <div class="card-face card-front">${icon}</div>
+                <div class="card-face card-front"></div>
                 <div class="card-face card-back">${icon}</div>
             `;
         } else {
