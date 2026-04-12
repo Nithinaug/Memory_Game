@@ -44,12 +44,12 @@ function createBoard() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Pick 5 unique fruits
+    // Pick 5 unique fruits from ICONS
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
-    const selectedPairs = shuffledIcons.slice(0, 4);
+    const selectedFruits = shuffledIcons.slice(0, 4);
     const extraFruit = shuffledIcons[4]; 
     
-    let gameIcons = [...selectedPairs, ...selectedIcons];
+    let gameIcons = [...selectedFruits, ...selectedFruits];
     gameIcons.sort(() => Math.random() - 0.5);
     
     // Add the extra fruit
@@ -61,7 +61,6 @@ function createBoard() {
         cardContainer.dataset.icon = icon;
         
         if (icon === extraFruit) {
-            // The 9th card is a decorative "Bonus" fruit, revealed from the start
             cardContainer.classList.add('logo-card');
             cardContainer.classList.add('flipped'); 
             cardContainer.innerHTML = `
