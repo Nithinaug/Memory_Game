@@ -2,7 +2,7 @@ const ICONS = ['🍎', '🍌', '🍒', '🍓', '🥑', '🍍', '🥝', '🍉', '
 
 let highScore = JSON.parse(localStorage.getItem('highscore')) || 0;
 let round = 1;
-let lives = 4;
+let lives = 5;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGame() {
-    lives = 4;
+    lives = 5;
     matchedPairs = 0;
     flippedCards = [];
     isChecking = false;
@@ -35,42 +35,40 @@ function updateDisplay() {
     const livesEl = document.getElementById('lives');
     const highscoreEl = document.getElementById('highscore');
 
-    if (roundEl) roundEl.innerText = `Lives: ${lives}`;
+    if (livesEl) livesEl.innerText = `Lives: ${lives}`;
     if (highscoreEl) highscoreEl.innerText = `Highscore: ${highScore}`;
-    if (roundEl && roundEl.parentElement.querySelector('.roundscore')) {
-        roundEl.parentElement.querySelector('.roundscore').innerText = `Round: ${round}`;
-    }
+    if (roundEl) roundEl.innerText = `Round: ${round}`;
 }
 
 function createBoard() {
     const grid = document.getElementById('grid-container');
     if (!grid) return;
     grid.innerHTML = '';
-    
+
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
     const selectedFruits = shuffledIcons.slice(0, 4);
-    wildcardIcon = shuffledIcons[4]; 
-    
+    wildcardIcon = shuffledIcons[4];
+
+    // Combine 4 pairs + 1 wildcard = 9 cards
     let gameIcons = [...selectedFruits, ...selectedFruits, wildcardIcon];
     gameIcons.sort(() => Math.random() - 0.5);
-    
+
     gameIcons.forEach((icon, index) => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('card');
         cardContainer.dataset.icon = icon;
-        
+
         cardContainer.innerHTML = `
             <div class="card-face card-front"></div>
             <div class="card-face card-back">${icon}</div>
         `;
-        
+
         cardContainer.addEventListener('click', () => flipCard(cardContainer));
         grid.appendChild(cardContainer);
     });
 }
 
 function flipCard(card) {
-    // CRITICAL: Block any flip if we are checking OR if 2 are already flipped OR if this card is already flipped/matched
     if (isChecking || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
         return;
     }
@@ -79,7 +77,7 @@ function flipCard(card) {
     flippedCards.push(card);
     
     if (flippedCards.length === 2) {
-        isChecking = true; // Set IMMEDIATELY to block further clicks
+        isChecking = true;
         setTimeout(checkForMatch, 600);
     }
 }
