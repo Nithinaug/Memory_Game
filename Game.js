@@ -60,8 +60,9 @@ function createBoard() {
     let gameIcons = [...selectedIcons, ...selectedIcons];
     gameIcons.sort(() => Math.random() - 0.5);
     
-    // Add the logo card at the end
+    // Add the wildcard card
     gameIcons.push(LOGO_CONTENT);
+    gameIcons.sort(() => Math.random() - 0.5); // Shuffle again to hide position
     
     gameIcons.forEach((icon, index) => {
         const cardContainer = document.createElement('div');
@@ -70,20 +71,14 @@ function createBoard() {
         
         if (icon === LOGO_CONTENT) {
             cardContainer.classList.add('logo-card');
-            // Fixed logo card: Always flipped to white side
-            cardContainer.classList.add('flipped');
-            cardContainer.innerHTML = `
-                <div class="card-face card-front"></div>
-                <div class="card-face card-back">${icon}</div>
-            `;
-        } else {
-            cardContainer.innerHTML = `
-                <div class="card-face card-front"></div>
-                <div class="card-face card-back">${icon}</div>
-            `;
-            cardContainer.addEventListener('click', () => flipCard(cardContainer));
         }
+
+        cardContainer.innerHTML = `
+            <div class="card-face card-front"></div>
+            <div class="card-face card-back">${icon}</div>
+        `;
         
+        cardContainer.addEventListener('click', () => flipCard(cardContainer));
         grid.appendChild(cardContainer);
     });
 }
@@ -105,20 +100,29 @@ function flipCard(card) {
 function checkForMatch() {
     const [card1, card2] = flippedCards;
     
-    if (card1.dataset.icon === card2.dataset.icon) {
+    // Wildcard Logic: 🎮 matches with ANYTHING
+    const isWildcardMatch = (card1.dataset.icon === LOGO_CONTENT || card2.dataset.icon === LOGO_CONTENT);
+    const isStandardMatch = (card1.dataset.icon === card2.dataset.icon);
+
+    if (isWildcardMatch || isStandardMatch) {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
         
-        if (matchedPairs === 4) {
-            setTimeout(() => {
-                showModal('Cleared!', `Round ${round} Complete`, () => {
-                    round++;
-                    updateHighScore();
-                    initGame();
-                });
-            }, 500);
-        }
+        // If matched with wildcard, we might have an odd card left eventually.
+        // But for 9 cards, matching 4 pairs (8 cards) leaves 1. 
+        // With wildcard, you match 2 cards even if they are different. 
+        // Total matched will reach 8 cards (4 matches). The 9th will be left.
+        // Actually, if you match wildcard with an 'apple', you still have one 'apple' left.
+        // This means you'll need one more match with that 'apple'.
+        // Wait, 9 cards = 4 pairs + 1 wildcard.
+        // Total matches possible: 4 matches of 2 cards = 8 cards. 1 card extra.
+        // Or if you match wildcard (1) with something (1), you have 7 cards left.
+        // 7 cards = 3 pairs + 1 single.
+        // You'll eventually have 1 pair match, then 1 pair match, then 1 pair match... 
+        // Actually, the game ends when all cards that can be matched are matched.
+        
+        checkWin();
     } else {
         lives--;
         updateDisplay();
@@ -137,6 +141,21 @@ function checkForMatch() {
     
     flippedCards = [];
     isChecking = false;
+}
+
+function checkWin() {
+    const matchedCount = document.querySelectorAll('.card.matched').length;
+    // For 9 cards, if 8 are matched, the 9th one is left over.
+    // Or if 4 "matches" happened, we are done.
+    if (matchedPairs === 4) {
+        setTimeout(() => {
+            showModal('Cleared!', `Round ${round} Complete`, () => {
+                round++;
+                updateHighScore();
+                initGame();
+            });
+        }, 500);
+    }
 }
 
 function showModal(title, text, callback) {
