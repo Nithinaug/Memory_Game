@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGame() {
-    lives = 5;
+    lives = 4;
     matchedPairs = 0;
     flippedCards = [];
     isChecking = false;
