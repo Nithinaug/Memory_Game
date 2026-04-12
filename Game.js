@@ -1,7 +1,7 @@
 const ICONS = ['🍎', '🍌', '🍒', '🍓', '🥑', '🍍', '🥝', '🍉', '🍋', '🍐', '��', '🫐'];
 let highScore = JSON.parse(localStorage.getItem('highscore')) || 0;
 let round = 1;
-let lives = 4;
+let lives = 6;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function initGame() {
-    lives = 4;
+    lives = 6;
     matchedPairs = 0;
     flippedCards = [];
     isChecking = false;
