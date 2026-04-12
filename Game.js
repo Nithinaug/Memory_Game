@@ -35,9 +35,11 @@ function updateDisplay() {
     const livesEl = document.getElementById('lives');
     const highscoreEl = document.getElementById('highscore');
 
-    if (roundEl) roundEl.innerText = `Round: ${round}`;
-    if (livesEl) livesEl.innerText = `Lives: ${lives}`;
+    if (roundEl) roundEl.innerText = `Lives: ${lives}`;
     if (highscoreEl) highscoreEl.innerText = `Highscore: ${highScore}`;
+    if (roundEl && roundEl.parentElement.querySelector('.roundscore')) {
+        roundEl.parentElement.querySelector('.roundscore').innerText = `Round: ${round}`;
+    }
 }
 
 function createBoard() {
@@ -45,7 +47,6 @@ function createBoard() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Pick 5 unique fruits
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
     const selectedFruits = shuffledIcons.slice(0, 4);
     wildcardIcon = shuffledIcons[4]; 
@@ -69,7 +70,8 @@ function createBoard() {
 }
 
 function flipCard(card) {
-    if (isChecking || card.classList.contains('flipped') || card.classList.contains('matched')) {
+    // CRITICAL: Block any flip if we are checking OR if 2 are already flipped OR if this card is already flipped/matched
+    if (isChecking || flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
         return;
     }
     
@@ -77,15 +79,19 @@ function flipCard(card) {
     flippedCards.push(card);
     
     if (flippedCards.length === 2) {
-        isChecking = true;
+        isChecking = true; // Set IMMEDIATELY to block further clicks
         setTimeout(checkForMatch, 600);
     }
 }
 
 function checkForMatch() {
+    if (flippedCards.length !== 2) {
+        isChecking = false;
+        return;
+    }
+
     const [card1, card2] = flippedCards;
     
-    // Wildcard Logic: wildcardIcon matches with ANYTHING
     const isWildcardMatch = (card1.dataset.icon === wildcardIcon || card2.dataset.icon === wildcardIcon);
     const isStandardMatch = (card1.dataset.icon === card2.dataset.icon);
 
@@ -104,6 +110,7 @@ function checkForMatch() {
             }, 500);
         }
         isChecking = false;
+        flippedCards = [];
     } else {
         lives--;
         updateDisplay();
@@ -113,16 +120,16 @@ function checkForMatch() {
                 initGame();
             });
             isChecking = false;
+            flippedCards = [];
         } else {
             setTimeout(() => {
                 card1.classList.remove('flipped');
                 card2.classList.remove('flipped');
+                flippedCards = [];
                 isChecking = false;
-            }, 800);
+            }, 1000);
         }
     }
-    
-    flippedCards = [];
 }
 
 function showModal(title, text, callback) {
@@ -154,6 +161,7 @@ function updateHighScore() {
     if (round > highScore) {
         highScore = round;
         localStorage.setItem('highscore', JSON.stringify(highScore));
-        updateDisplay();
+        const highscoreEl = document.getElementById('highscore');
+        if (highscoreEl) highscoreEl.innerText = `Highscore: ${highScore}`;
     }
 }
