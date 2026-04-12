@@ -20,7 +20,6 @@ h1 {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Rules Box */
 .rules-box {
     background: rgba(255, 255, 255, 0.95);
     max-width: 500px;
@@ -51,12 +50,11 @@ h1 {
     margin: 1.5rem 0;
 }
 
-/* THE BUTTONS */
 .play-button, .start-button, .home-button, .modal-button {
     background-color: #2196f3; 
     border: none;
-    padding: 1rem 2.5rem;
-    font-size: 1.3rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
     color: white;
     border-radius: 8px;
     cursor: pointer;
@@ -72,12 +70,11 @@ h1 {
     box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
-/* Game Page Styles */
 .score-container {
   display: flex;
   justify-content: space-between;
   background: white;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 12px;
   max-width: 800px;
   margin: 0 auto 1.5rem auto;
@@ -86,7 +83,7 @@ h1 {
 
 .highscore, .lives, .roundscore {
   font-weight: 800;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 .highscore { color: chocolate; }
@@ -95,9 +92,9 @@ h1 {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 120px);
-  grid-template-rows: repeat(3, 140px);    
-  gap: 1rem; 
+  grid-template-columns: repeat(4, 110px);
+  grid-template-rows: repeat(2, 130px);    
+  gap: 0.8rem; 
   width: fit-content;
   margin: 1.5rem auto;
   perspective: 1000px;
@@ -125,7 +122,7 @@ h1 {
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  font-size: 3rem;
+  font-size: 2.5rem;
   user-select: none;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -139,14 +136,7 @@ h1 {
 .card-back {
   background-color: white;
   transform: rotateY(180deg);
-  border: 3px solid #4caf50;
-}
-
-.card.logo-card {
-  cursor: default;
-}
-.card.logo-card .card-face {
-  font-size: 4rem; /* BIGGER BETTER */
+  border: 4px solid #4caf50;
 }
 
 .card.matched .card-back {
@@ -155,7 +145,6 @@ h1 {
   opacity: 0.9;
 }
 
-/* Modal */
 .modal {
   display: none;
   position: fixed;
