@@ -6,6 +6,7 @@ let lives = 4;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
+let wildcardIcon = '';
 
 // Navigation
 function play() { location.href = 'Main.html'; }
@@ -44,36 +45,25 @@ function createBoard() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Pick 5 unique fruits from ICONS
+    // Pick 5 unique fruits
     const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
     const selectedFruits = shuffledIcons.slice(0, 4);
-    const extraFruit = shuffledIcons[4]; 
+    wildcardIcon = shuffledIcons[4]; 
     
-    let gameIcons = [...selectedFruits, ...selectedFruits];
+    let gameIcons = [...selectedFruits, ...selectedFruits, wildcardIcon];
     gameIcons.sort(() => Math.random() - 0.5);
-    
-    // Add the extra fruit
-    gameIcons.push(extraFruit);
     
     gameIcons.forEach((icon, index) => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('card');
         cardContainer.dataset.icon = icon;
         
-        if (icon === extraFruit) {
-            cardContainer.classList.add('logo-card');
-            cardContainer.classList.add('flipped'); 
-            cardContainer.innerHTML = `
-                <div class="card-face card-front"></div>
-                <div class="card-face card-back">${icon}</div>
-            `;
-        } else {
-            cardContainer.innerHTML = `
-                <div class="card-face card-front"></div>
-                <div class="card-face card-back">${icon}</div>
-            `;
-            cardContainer.addEventListener('click', () => flipCard(cardContainer));
-        }
+        cardContainer.innerHTML = `
+            <div class="card-face card-front"></div>
+            <div class="card-face card-back">${icon}</div>
+        `;
+        
+        cardContainer.addEventListener('click', () => flipCard(cardContainer));
         grid.appendChild(cardContainer);
     });
 }
@@ -95,7 +85,11 @@ function flipCard(card) {
 function checkForMatch() {
     const [card1, card2] = flippedCards;
     
-    if (card1.dataset.icon === card2.dataset.icon) {
+    // Wildcard Logic: wildcardIcon matches with ANYTHING
+    const isWildcardMatch = (card1.dataset.icon === wildcardIcon || card2.dataset.icon === wildcardIcon);
+    const isStandardMatch = (card1.dataset.icon === card2.dataset.icon);
+
+    if (isWildcardMatch || isStandardMatch) {
         card1.classList.add('matched');
         card2.classList.add('matched');
         matchedPairs++;
@@ -124,7 +118,7 @@ function checkForMatch() {
                 card1.classList.remove('flipped');
                 card2.classList.remove('flipped');
                 isChecking = false;
-            }, 1000);
+            }, 800);
         }
     }
     
