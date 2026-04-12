@@ -1,5 +1,4 @@
 const ICONS = ['🍎', '🍌', '🍒', '🍓', '🥑', '🍍', '🥝', '🍉', '🍋', '🍐', '��', '🫐'];
-const LOGO_CONTENT = '🎮'; 
 
 let highScore = JSON.parse(localStorage.getItem('highscore')) || 0;
 let round = 1;
@@ -7,6 +6,7 @@ let lives = 4;
 let flippedCards = [];
 let matchedPairs = 0;
 let isChecking = false;
+let wildcardIcon = '';
 
 // Navigation
 function play() {
@@ -55,24 +55,22 @@ function createBoard() {
     
     grid.innerHTML = '';
     
-    const numPairs = 4;
-    const selectedIcons = ICONS.sort(() => Math.random() - 0.5).slice(0, numPairs);
-    let gameIcons = [...selectedIcons, ...selectedIcons];
-    gameIcons.sort(() => Math.random() - 0.5);
+    // Shuffle all icons
+    const shuffledIcons = [...ICONS].sort(() => Math.random() - 0.5);
     
-    // Add the wildcard card
-    gameIcons.push(LOGO_CONTENT);
-    gameIcons.sort(() => Math.random() - 0.5); // Shuffle again to hide position
+    // Pick 4 icons for the 4 pairs
+    const selectedPairs = shuffledIcons.slice(0, 4);
+    // Pick 1 different icon for the wildcard
+    wildcardIcon = shuffledIcons[4];
+    
+    let gameIcons = [...selectedPairs, ...selectedPairs, wildcardIcon];
+    gameIcons.sort(() => Math.random() - 0.5);
     
     gameIcons.forEach((icon, index) => {
         const cardContainer = document.createElement('div');
         cardContainer.classList.add('card');
         cardContainer.dataset.icon = icon;
         
-        if (icon === LOGO_CONTENT) {
-            cardContainer.classList.add('logo-card');
-        }
-
         cardContainer.innerHTML = `
             <div class="card-face card-front"></div>
             <div class="card-face card-back">${icon}</div>
@@ -100,8 +98,8 @@ function flipCard(card) {
 function checkForMatch() {
     const [card1, card2] = flippedCards;
     
-    // Wildcard Logic: 🎮 matches with ANYTHING
-    const isWildcardMatch = (card1.dataset.icon === LOGO_CONTENT || card2.dataset.icon === LOGO_CONTENT);
+    // Wildcard Logic: wildcardIcon matches with ANYTHING
+    const isWildcardMatch = (card1.dataset.icon === wildcardIcon || card2.dataset.icon === wildcardIcon);
     const isStandardMatch = (card1.dataset.icon === card2.dataset.icon);
 
     if (isWildcardMatch || isStandardMatch) {
@@ -109,24 +107,11 @@ function checkForMatch() {
         card2.classList.add('matched');
         matchedPairs++;
         
-        // If matched with wildcard, we might have an odd card left eventually.
-        // But for 9 cards, matching 4 pairs (8 cards) leaves 1. 
-        // With wildcard, you match 2 cards even if they are different. 
-        // Total matched will reach 8 cards (4 matches). The 9th will be left.
-        // Actually, if you match wildcard with an 'apple', you still have one 'apple' left.
-        // This means you'll need one more match with that 'apple'.
-        // Wait, 9 cards = 4 pairs + 1 wildcard.
-        // Total matches possible: 4 matches of 2 cards = 8 cards. 1 card extra.
-        // Or if you match wildcard (1) with something (1), you have 7 cards left.
-        // 7 cards = 3 pairs + 1 single.
-        // You'll eventually have 1 pair match, then 1 pair match, then 1 pair match... 
-        // Actually, the game ends when all cards that can be matched are matched.
-        
         checkWin();
     } else {
         lives--;
         updateDisplay();
-        if (lives === 0) {
+        if (livesReachZero()) {
             showModal('Game Over', `You reached Round ${round}`, () => {
                 round = 1;
                 initGame();
@@ -143,10 +128,11 @@ function checkForMatch() {
     isChecking = false;
 }
 
+function livesReachZero() {
+    return lives <= 0;
+}
+
 function checkWin() {
-    const matchedCount = document.querySelectorAll('.card.matched').length;
-    // For 9 cards, if 8 are matched, the 9th one is left over.
-    // Or if 4 "matches" happened, we are done.
     if (matchedPairs === 4) {
         setTimeout(() => {
             showModal('Cleared!', `Round ${round} Complete`, () => {
